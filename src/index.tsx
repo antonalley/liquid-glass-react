@@ -43,7 +43,7 @@ const generateShaderDisplacementMap = (
 };
 
 const getMap = (
-	mode: "standard" | "polar" | "prominent" | "shader",
+	mode: LiquidGlassMode,
 	shaderMapUrl?: string,
 ) => {
 	switch (mode) {
@@ -67,7 +67,7 @@ const GlassFilter: React.FC<{
 	aberrationIntensity: number;
 	width: number;
 	height: number;
-	mode: "standard" | "polar" | "prominent" | "shader";
+	mode: LiquidGlassMode;
 	shaderMapUrl?: string;
 }> = ({
 	id,
@@ -259,7 +259,7 @@ const GlassContainer = forwardRef<
 		padding?: string;
 		glassSize?: { width: number; height: number };
 		onClick?: () => void;
-		mode?: "standard" | "polar" | "prominent" | "shader";
+		mode?: LiquidGlassMode;
 	}>
 >(
 	(
@@ -377,25 +377,57 @@ const GlassContainer = forwardRef<
 
 GlassContainer.displayName = "GlassContainer";
 
-interface LiquidGlassProps {
+// Type definitions for better TypeScript experience
+
+/**
+ * Available modes for the LiquidGlass effect
+ */
+export type LiquidGlassMode = "standard" | "polar" | "prominent" | "shader";
+
+/**
+ * Props for the LiquidGlass component
+ */
+export interface LiquidGlassProps {
+	/** The content to render inside the glass effect */
 	children: React.ReactNode;
+	/** Controls the intensity of the displacement effect (default: 70) */
 	displacementScale?: number;
+	/** Controls the background blur amount (default: 0.0625) */
 	blurAmount?: number;
+	/** Controls color saturation percentage (default: 140) */
 	saturation?: number;
+	/** Controls chromatic aberration intensity (default: 2) */
 	aberrationIntensity?: number;
+	/** Controls how much the glass stretches with mouse movement (default: 0.15) */
 	elasticity?: number;
+	/** Border radius in pixels (default: 999) */
 	cornerRadius?: number;
+	/** External mouse position for coordinated effects */
 	globalMousePos?: { x: number; y: number };
+	/** Current mouse offset relative to the component center */
 	mouseOffset?: { x: number; y: number };
+	/** Reference to container element for mouse tracking */
 	mouseContainer?: React.RefObject<HTMLElement | null> | null;
+	/** Additional CSS classes */
 	className?: string;
+	/** Padding around the content (default: "24px 32px") */
 	padding?: string;
+	/** Additional CSS styles */
 	style?: React.CSSProperties;
+	/** Whether the component is over a light background */
 	overLight?: boolean;
-	mode?: "standard" | "polar" | "prominent" | "shader";
+	/** Displacement effect mode (default: "standard") */
+	mode?: LiquidGlassMode;
+	/** Click handler function */
 	onClick?: () => void;
 }
 
+/**
+ * LiquidGlass component that creates Apple's signature liquid glass effect
+ * 
+ * @param props - Configuration props for the component
+ * @returns JSX element with the liquid glass effect
+ */
 export default function LiquidGlass({
 	children,
 	displacementScale = 70,
@@ -780,3 +812,7 @@ export default function LiquidGlass({
 		</>
 	);
 }
+
+// Re-export useful types from shader-utils for convenience
+export type { Vec2, ShaderOptions, FragmentShaderType } from "./shader-utils";
+export { fragmentShaders, ShaderDisplacementGenerator } from "./shader-utils";
