@@ -1,6 +1,18 @@
-import { type CSSProperties, forwardRef, useCallback, useEffect, useId, useRef, useState } from "react"
+import { type CSSProperties, forwardRef, useCallback, useEffect, useRef, useState } from "react"
 import { ShaderDisplacementGenerator, fragmentShaders } from "./shader-utils"
 import { displacementMap, polarDisplacementMap, prominentDisplacementMap } from "./utils"
+
+// React 17-compatible useId hook
+let idCounter = 0
+const useCompatibleId = (): string => {
+  const idRef = useRef<string | undefined>(undefined)
+  
+  if (!idRef.current) {
+    idRef.current = `liquid-glass-${++idCounter}-${Math.random().toString(36).substr(2, 9)}`
+  }
+  
+  return idRef.current
+}
 
 // Generate shader-based displacement map using shaderUtils
 const generateShaderDisplacementMap = (width: number, height: number): string => {
@@ -174,7 +186,7 @@ const GlassContainer = forwardRef<
     },
     ref,
   ) => {
-    const filterId = useId()
+    const filterId = useCompatibleId()
     const [shaderMapUrl, setShaderMapUrl] = useState<string>("")
 
     const isFirefox = navigator.userAgent.toLowerCase().includes("firefox")
